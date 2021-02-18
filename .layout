@@ -32,7 +32,7 @@
           "type": "directory",
           "children": [
             {
-              "name": "LibScrypt.pm",
+              "name": "LibScrypt.rakumod",
               "type": "file"
             }
           ]
