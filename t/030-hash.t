@@ -19,6 +19,7 @@ if library-exists('scrypt', v0 ) {
     throws-like { scrypt-hash($password, 99) }, X::TypeCheck::Binding::Parameter, message => q{Constraint type check failed in binding to parameter '$N'; expected Crypt::LibScrypt::PowTwo but got Int (99)}, "Type check on N argument is correct";
     lives-ok { $hash = scrypt-hash($password, 32, 4, 16) }, 'scrypt-hash with some hashing parameters';
     ok scrypt-verify($hash, $password), "verify ok";
+    nok scrypt-verify("ahjasHSyjjskk", $password), "not okay with any old garbage";
 }
 else {
     skip "No libscrypt, skipping tests";

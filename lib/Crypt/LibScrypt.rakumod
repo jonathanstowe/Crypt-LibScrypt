@@ -102,7 +102,7 @@ module Crypt::LibScrypt {
     sub libscrypt_check(Str $hash, Str $password --> int32) is native(LIB) { * }
 
     sub scrypt-verify(Str $hash, Str $password --> Bool ) is export {
-        ?libscrypt_check($hash, $password);
+        libscrypt_check($hash, $password) > 0 ?? True !! False;
     }
 }
 
