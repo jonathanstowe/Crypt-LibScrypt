@@ -77,10 +77,13 @@ module Crypt::LibScrypt {
 
     constant LIB =  [ 'scrypt', v0 ];
 
-    constant SCRYPT_MCF_LEN = 128;
-    constant SCRYPT_N       = 16384;
-    constant SCRYPT_r       = 8;
-    constant SCRYPT_p       = 1;
+    constant SCRYPT_SALT_LEN = 16;
+    constant SCRYPT_HASH_LEN = 64;
+    constant SCRYPT_MCF_LEN  = 128;
+    constant SCRYPT_B64_LEN  = 256;
+    constant SCRYPT_N        = 16384;
+    constant SCRYPT_r        = 8;
+    constant SCRYPT_p        = 1;
 
 
     sub libscrypt_hash(CArray[uint8] $out, Str $password, uint32 $N, uint8 $r, uint8 $p --> int32) is native(LIB) { * }
@@ -103,6 +106,59 @@ module Crypt::LibScrypt {
 
     sub scrypt-verify(Str $hash, Str $password --> Bool ) is export {
         libscrypt_check($hash, $password) > 0 ?? True !! False;
+    }
+
+    sub libscrypt_salt_gen(CArray[uint8] $salt, size_t $len --> int32) is native(LIB) { * }
+
+    sub scrypt-salt(uint32 $len = SCRYPT_SALT_LEN --> buf8) is export {
+        my $salt = CArray[uint8].allocate($len);
+
+        if my $rc = libscrypt_salt_gen($salt, $len) {
+            die "failure in scrypt-salt";
+        }
+
+        return buf8.new(copy-carray-to-buf($salt, $len));
+    }
+
+    sub libscrypt_scrypt(
+        CArray[uint8] $passwd,
+        size_t        $passwdlen,
+        CArray[uint8] $salt,
+        size_t        $saltlen,
+        uint64        $N,
+        uint32        $r,
+        uint32        $p,
+        CArray[uint8] $buf,
+        size_t        $buflen --> int32
+    ) is native(LIB) { * }
+
+    sub scrypt-scrypt(Str $password, buf8 $salt, PowTwo $N = SCRYPT_N, Int $r = SCRYPT_r, Int $p = SCRYPT_p -->  buf8) is export {
+        die 'no salt for scrypt-scrypt' unless $salt && $salt.elems;
+
+        my $passbuf = $password.encode;
+        my $passptr = nativecast(CArray[uint8], $passbuf);
+        my $saltptr = nativecast(CArray[uint8], $salt);
+
+        my $hashed = CArray[uint8].allocate(SCRYPT_HASH_LEN);
+
+        if my $rc = libscrypt_scrypt($passptr, $passbuf.elems, $saltptr, $salt.elems, $N, $r, $p, $hashed, SCRYPT_HASH_LEN) {
+            die "failure in scrypt-scrypt";
+        }
+
+        return buf8.new(copy-carray-to-buf($hashed, SCRYPT_HASH_LEN));
+    }
+
+    sub libscrypt_mcf(uint32 $N, uint32 $r, uint32 $p, Str $salt, Str $hash, CArray[uint8] $mcf --> int32) is native(LIB) { * }
+
+    sub scrypt-mcf(Str $salt, Str $hash, PowTwo $N = SCRYPT_N, Int $r = SCRYPT_r, Int $p = SCRYPT_p -->  Str) is export {
+        my $mcf = CArray[uint8].allocate(SCRYPT_MCF_LEN);
+
+        if !libscrypt_mcf($N, $r, $p, $salt, $hash, $mcf) {
+            die "failure in scrypt-mcf";
+        }
+
+        my $buf = copy-carray-to-buf($mcf, SCRYPT_MCF_LEN);
+        $buf.decode.subst(/\0+$/,'');
     }
 }
 

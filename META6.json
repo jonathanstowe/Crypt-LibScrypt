@@ -1,6 +1,8 @@
 {
   "test-depends": [
-    "LibraryCheck"
+    "LibraryCheck",
+    "MIME::Base64",
+    "Net::Ethereum"
   ],
   "name": "Crypt::LibScrypt",
   "license": "Artistic-2.0",
@@ -27,7 +29,7 @@
     "LibraryCheck",
     "NativeHelpers::Array"
   ],
-  "version": "0.0.4",
+  "version": "0.0.5",
   "resources": [
   ],
   "auth": "zef:jonathanstowe",
