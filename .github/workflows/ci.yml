@@ -10,7 +10,7 @@ jobs:
       image: rakudo-star:latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Raku version
       run: raku -v
