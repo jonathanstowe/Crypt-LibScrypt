@@ -2,7 +2,7 @@
 
 Scrypt password hashing using libscrypt
 
-![Build Status](https://github.com/jonathanstowe/Crypt-LibScrypt/workflows/CI/badge.svg)
+[![CI](https://github.com/jonathanstowe/Crypt-LibScrypt/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jonathanstowe/Crypt-LibScrypt/actions/workflows/ci.yml)
 
 ## Synopsis
 
@@ -55,5 +55,5 @@ https://github.com/jonathanstowe/Crypt-LibScrypt/issues
 This is free software please see the [LICENCE](LICENCE) file in the distribution
 for details.
 
-© Jonathan Stowe 2021
+© Jonathan Stowe 2021-2024
 

@@ -1,3 +1,5 @@
+v0.0.5	Sun  3 Mar 19:22:45 GMT 2024
+	* Add binding to libscrypt_scrypt native function (from Pheix)
 v0.0.4	Sun  7 Aug 09:45:11 BST 2022
 	* Upload to zef repository
 v0.0.3		Fri 19 Feb 12:56:50 GMT 2021
